@@ -9,6 +9,8 @@ from urllib.error import URLError
 import requests
 import os
 from io import BytesIO
+from kaggle.api.kaggle_api_extended import KaggleApi
+
 
 st.set_page_config(page_title="Housing Maps Dashboard", layout="wide")
 
@@ -71,47 +73,51 @@ def sample_df_for_map(df, max_points=5000, random_state=42):
 # Load data (cached)
 # ---------------------------
 
-def load_data_from_drive():
-    """Load and preprocess the cleaned housing dataset directly from Google Drive."""
+@st.cache_data(show_spinner=False)
+def load_data_from_kaggle():
+    """تحميل البيانات من Kaggle مباشرة."""
     
-    # Direct download link from Google Drive
-    DATA_URL = "https://drive.google.com/uc?id=1uqbolYGFffYAdKU9J8d5ZRBh8Pmk8aSl"
+    # تهيئة API Kaggle
+    api = KaggleApi()
+    api.authenticate()
     
-    # Download the CSV into memory
-    r = requests.get(DATA_URL)
-    r.raise_for_status()  # Raise error if download failed
+    # معلومات الـ Dataset
+    dataset = "maschenny0/housing-maps-dashboard"
+    file_name = "cleaned_housing_data.csv"
     
-    # Read CSV directly from bytes
-    df = pd.read_csv(BytesIO(r.content))
+    # تحميل الملف إذا لم يكن موجودًا
+    if not os.path.exists(file_name):
+        api.dataset_download_file(dataset, file_name, path=".", unzip=True)
     
-    # Clean column names
-    df.columns = df.columns.str.strip().str.lower()  # remove spaces & lowercase
+    # قراءة البيانات
+    df = pd.read_csv(file_name)
     
-    # Ensure numeric columns
+    # تنظيف الأعمدة
+    df.columns = df.columns.str.strip().str.lower()
+    
+    # تحويل الأعمدة الرقمية
     numeric_cols = ["price", "living_space", "land_space", "price_per_unit", "bedroom_number", "bathroom_number"]
     for col in numeric_cols:
         if col in df.columns:
             df[col] = pd.to_numeric(df[col], errors="coerce")
     
-    # Ensure is_owned_by_zillow numeric (0/1)
+    # التأكد من عمود is_owned_by_zillow
     if "is_owned_by_zillow" in df.columns:
         df["is_owned_by_zillow"] = pd.to_numeric(df["is_owned_by_zillow"], errors="coerce").fillna(0).astype(int)
-    else:
-        df["is_owned_by_zillow"] = 0
     
-    # Parse RunDate if present
+    # تحويل عمود rundate إذا كان موجودًا
     if "rundate" in df.columns:
         df["rundate"] = pd.to_datetime(df["rundate"], errors="coerce")
     
-    # Normalize postcode to string
+    # تنسيق عمود postcode
     if "postcode" in df.columns:
         df["postcode"] = df["postcode"].astype(str).str.zfill(5)
     
     return df
 
-# Load dataset
-df = load_data_from_drive()
-st.success(f"Loaded dataset with {len(df)} rows and {len(df.columns)} columns.")
+# تحميل البيانات
+df = load_data_from_kaggle()
+st.success(f"تم تحميل البيانات بنجاح: {len(df)} صفوف و {len(df.columns)} أعمدة.")
 # ---------------------------
 # Sidebar filters
 # ---------------------------
@@ -459,6 +465,7 @@ if "living_space" in filtered.columns:
 # ---------------------------
 st.markdown("---")
 st.markdown("Dashboard built with Streamlit, Plotly and Geo data. Use the sidebar to filter state, listing age and price range.")
+
 
 
 
