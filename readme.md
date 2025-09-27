@@ -14,7 +14,7 @@ The main objectives:
 ## Data Files
 Due to large size, download the datasets from the links below:
 
-- [Cleaned Housing Data CSV]((https://drive.google.com/file/d/1uqbolYGFffYAdKU9J8d5ZRBh8Pmk8aSl/view?usp=sharing))
+- [Cleaned Housing Data CSV](https://drive.google.com/file/d/1uqbolYGFffYAdKU9J8d5ZRBh8Pmk8aSl/view?usp=sharing)
 - [Original 600K US Housing Properties](https://drive.google.com/file/d/1FwxwX4Ifs2ciXN2F6qbAOHPIJip8xLgF/view?usp=sharing)
 - [EDA Notebook](https://drive.google.com/file/d/1XtcLvh5LD_tBywxANjbl9RJ8hnC21DX6/view?usp=sharing)
 
