@@ -26,9 +26,9 @@ The dataset contains 500,000 US homes for sale, including information on price, 
 ---
 
 ## Team Members
-- Yahya  
-- Moudha  
-- Abdulrahman  
+- Yahya Alhabboub
+- Mawda Algurafi
+- Abdulrahman Attar
 
 ---
 
