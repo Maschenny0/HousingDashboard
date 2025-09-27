@@ -7,6 +7,7 @@ import plotly.graph_objects as go
 from datetime import timedelta
 from urllib.error import URLError
 import requests
+import os
 
 st.set_page_config(page_title="Housing Maps Dashboard", layout="wide")
 
@@ -71,23 +72,40 @@ def sample_df_for_map(df, max_points=5000, random_state=42):
 @st.cache_data(show_spinner=False)
 def load_data(path="cleaned_housing_data.csv"):
     """Load and do light preprocessing for the cleaned dataset."""
+    
+    # 1. Download if file doesn't exist
+    DATA_URL = "https://drive.google.com/file/d/1uqbolYGFffYAdKU9J8d5ZRBh8Pmk8aSl/view?usp=sharing"  
+    if not os.path.exists(path):
+        print("Downloading dataset...")
+        r = requests.get(DATA_URL)
+        with open(path, "wb") as f:
+            f.write(r.content)
+
+    # 2. Load CSV
     df = pd.read_csv(path)
-    # parse dates if present
+
+    # 3. Parse dates if present
     if "RunDate" in df.columns:
         df["RunDate"] = pd.to_datetime(df["RunDate"], errors="coerce")
-    # ensure numeric columns
+    
+    # 4. Ensure numeric columns
     for col in ["price", "living_space", "land_space", "price_per_unit", "bedroom_number", "bathroom_number"]:
         if col in df.columns:
             df[col] = pd.to_numeric(df[col], errors="coerce")
-    # ensure is_owned_by_zillow numeric (0/1)
+    
+    # 5. Ensure is_owned_by_zillow numeric (0/1)
     if "is_owned_by_zillow" in df.columns:
         df["is_owned_by_zillow"] = pd.to_numeric(df["is_owned_by_zillow"], errors="coerce").fillna(0).astype(int)
-    # normalize postcode to string
+    
+    # 6. Normalize postcode to string
     if "postcode" in df.columns:
         df["postcode"] = df["postcode"].astype(str).str.zfill(5)
+    
     return df
 
+# Load dataset
 df = load_data("cleaned_housing_data.csv")
+
 
 # ---------------------------
 # Sidebar filters
@@ -436,3 +454,4 @@ if "living_space" in filtered.columns:
 # ---------------------------
 st.markdown("---")
 st.markdown("Dashboard built with Streamlit, Plotly and Geo data. Use the sidebar to filter state, listing age and price range.")
+
