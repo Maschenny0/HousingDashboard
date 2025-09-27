@@ -74,7 +74,7 @@ def load_data(path="cleaned_housing_data.csv"):
     """Load and do light preprocessing for the cleaned dataset."""
     
     # 1. Download if file doesn't exist
-    DATA_URL = "https://drive.google.com/file/d/1uqbolYGFffYAdKU9J8d5ZRBh8Pmk8aSl/view?usp=sharing"  
+    DATA_URL = "https://drive.google.com/uc?id=1uqbolYGFffYAdKU9J8d5ZRBh8Pmk8aSl"  
     if not os.path.exists(path):
         print("Downloading dataset...")
         r = requests.get(DATA_URL)
@@ -454,4 +454,5 @@ if "living_space" in filtered.columns:
 # ---------------------------
 st.markdown("---")
 st.markdown("Dashboard built with Streamlit, Plotly and Geo data. Use the sidebar to filter state, listing age and price range.")
+
 
