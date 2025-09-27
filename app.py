@@ -8,6 +8,7 @@ from datetime import timedelta
 from urllib.error import URLError
 import requests
 import os
+from io import BytesIO
 
 st.set_page_config(page_title="Housing Maps Dashboard", layout="wide")
 
@@ -458,6 +459,7 @@ if "living_space" in filtered.columns:
 # ---------------------------
 st.markdown("---")
 st.markdown("Dashboard built with Streamlit, Plotly and Geo data. Use the sidebar to filter state, listing age and price range.")
+
 
 
 
