@@ -74,50 +74,36 @@ def sample_df_for_map(df, max_points=5000, random_state=42):
 # ---------------------------
 
 @st.cache_data(show_spinner=False)
-def load_data_from_kaggle():
-    """تحميل البيانات من Kaggle مباشرة."""
-    
-    # تهيئة API Kaggle
-    api = KaggleApi()
-    api.authenticate()
-    
-    # معلومات الـ Dataset
-    dataset = "maschenny0/housing-maps-dashboard"
-    file_name = "cleaned_housing_data.csv"
-    
-    # تحميل الملف إذا لم يكن موجودًا
-    if not os.path.exists(file_name):
-        api.dataset_download_file(dataset, file_name, path=".", unzip=True)
-    
-    # قراءة البيانات
-    df = pd.read_csv(file_name)
-    
-    # تنظيف الأعمدة
-    df.columns = df.columns.str.strip().str.lower()
-    
-    # تحويل الأعمدة الرقمية
+def load_data(folder="data"):
+    # اجمع كل الأجزاء
+    files = sorted(glob.glob(f"{folder}/cleaned_part_*.csv"))
+    if not files:
+        st.error("No data files found in 'data' folder.")
+        return pd.DataFrame()
+
+    df_list = []
+    for f in files:
+        df_list.append(pd.read_csv(f))
+    df = pd.concat(df_list, ignore_index=True)
+
+    # تنظيف سريع
+    if "RunDate" in df.columns:
+        df["RunDate"] = pd.to_datetime(df["RunDate"], errors="coerce")
+
     numeric_cols = ["price", "living_space", "land_space", "price_per_unit", "bedroom_number", "bathroom_number"]
     for col in numeric_cols:
         if col in df.columns:
             df[col] = pd.to_numeric(df[col], errors="coerce")
-    
-    # التأكد من عمود is_owned_by_zillow
+
     if "is_owned_by_zillow" in df.columns:
         df["is_owned_by_zillow"] = pd.to_numeric(df["is_owned_by_zillow"], errors="coerce").fillna(0).astype(int)
-    
-    # تحويل عمود rundate إذا كان موجودًا
-    if "rundate" in df.columns:
-        df["rundate"] = pd.to_datetime(df["rundate"], errors="coerce")
-    
-    # تنسيق عمود postcode
-    if "postcode" in df.columns:
-        df["postcode"] = df["postcode"].astype(str).str.zfill(5)
-    
+
     return df
 
-# تحميل البيانات
-df = load_data_from_kaggle()
-st.success(f"تم تحميل البيانات بنجاح: {len(df)} صفوف و {len(df.columns)} أعمدة.")
+# استدعاء البيانات
+df = load_data()
+st.success(f"Loaded {len(df)} rows and {len(df.columns)} columns.")
+
 # ---------------------------
 # Sidebar filters
 # ---------------------------
@@ -465,6 +451,7 @@ if "living_space" in filtered.columns:
 # ---------------------------
 st.markdown("---")
 st.markdown("Dashboard built with Streamlit, Plotly and Geo data. Use the sidebar to filter state, listing age and price range.")
+
 
 
 
