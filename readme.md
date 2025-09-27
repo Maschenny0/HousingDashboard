@@ -14,9 +14,9 @@ The main objectives:
 ## Data Files
 Due to large size, download the datasets from the links below:
 
-- [Cleaned Housing Data CSV]([https://drive.google.com/your_link_here](https://drive.google.com/file/d/1uqbolYGFffYAdKU9J8d5ZRBh8Pmk8aSl/view?usp=sharing))
-- [Original 600K US Housing Properties]([https://drive.google.com/your_link_here](https://drive.google.com/drive/folders/1oCvh4n4tcLaNDVkRAl8d8j9MQFrjq6EF?usp=sharing))
-- [EDA Notebook]([https://drive.google.com/your_link_here](https://drive.google.com/drive/folders/1oCvh4n4tcLaNDVkRAl8d8j9MQFrjq6EF?usp=sharing))
+- [Cleaned Housing Data CSV]((https://drive.google.com/file/d/1uqbolYGFffYAdKU9J8d5ZRBh8Pmk8aSl/view?usp=sharing))
+- [Original 600K US Housing Properties](https://drive.google.com/file/d/1FwxwX4Ifs2ciXN2F6qbAOHPIJip8xLgF/view?usp=sharing)
+- [EDA Notebook](https://drive.google.com/file/d/1XtcLvh5LD_tBywxANjbl9RJ8hnC21DX6/view?usp=sharing)
 
 ## Data Source
 The dataset contains 500,000 US homes for sale, including information on price, bedrooms, bathrooms, living and land space, property type, status, and geographic coordinates.
