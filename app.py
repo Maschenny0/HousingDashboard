@@ -70,68 +70,47 @@ def sample_df_for_map(df, max_points=5000, random_state=42):
 # Load data (cached)
 # ---------------------------
 
-@st.cache_data(show_spinner=False)
-def load_data(path="cleaned_housing_data.csv"):
-    """Load and preprocess the cleaned housing dataset safely."""
-
+def load_data_from_drive():
+    """Load and preprocess the cleaned housing dataset directly from Google Drive."""
+    
     # Direct download link from Google Drive
     DATA_URL = "https://drive.google.com/uc?id=1uqbolYGFffYAdKU9J8d5ZRBh8Pmk8aSl"
-
-    # 1. Download file if not present
-    if not os.path.exists(path):
-        print("Downloading dataset from Google Drive...")
-        r = requests.get(DATA_URL)
-        r.raise_for_status()  # Raise error if download failed
-        with open(path, "wb") as f:
-            f.write(r.content)
-
-    # 2. Check file size (ensure it's not an HTML page)
-    if os.path.getsize(path) < 1000:  # likely HTML page, not CSV
-        raise ValueError("Downloaded file is too small or invalid. Check Google Drive link.")
-
-    # 3. Load CSV
-    df = pd.read_csv(path)
-
-    # 4. Clean column names
+    
+    # Download the CSV into memory
+    r = requests.get(DATA_URL)
+    r.raise_for_status()  # Raise error if download failed
+    
+    # Read CSV directly from bytes
+    df = pd.read_csv(BytesIO(r.content))
+    
+    # Clean column names
     df.columns = df.columns.str.strip().str.lower()  # remove spaces & lowercase
-
-    # 5. Required numeric columns
+    
+    # Ensure numeric columns
     numeric_cols = ["price", "living_space", "land_space", "price_per_unit", "bedroom_number", "bathroom_number"]
     for col in numeric_cols:
         if col in df.columns:
             df[col] = pd.to_numeric(df[col], errors="coerce")
-        else:
-            st.warning(f"Column '{col}' not found in dataset.")
-
-    # 6. Ensure is_owned_by_zillow numeric (0/1)
+    
+    # Ensure is_owned_by_zillow numeric (0/1)
     if "is_owned_by_zillow" in df.columns:
         df["is_owned_by_zillow"] = pd.to_numeric(df["is_owned_by_zillow"], errors="coerce").fillna(0).astype(int)
     else:
         df["is_owned_by_zillow"] = 0
-        st.warning("'is_owned_by_zillow' column missing. Defaulting to 0.")
-
-    # 7. Parse RunDate if present
+    
+    # Parse RunDate if present
     if "rundate" in df.columns:
         df["rundate"] = pd.to_datetime(df["rundate"], errors="coerce")
-
-    # 8. Normalize postcode to string
+    
+    # Normalize postcode to string
     if "postcode" in df.columns:
         df["postcode"] = df["postcode"].astype(str).str.zfill(5)
-    else:
-        st.warning("'postcode' column not found.")
-
-    # 9. Ensure state and city exist
-    for col in ["state", "city"]:
-        if col not in df.columns:
-            st.error(f"Required column '{col}' is missing. Dataset may be invalid.")
-
+    
     return df
 
 # Load dataset
-df = load_data("cleaned_housing_data.csv")
+df = load_data_from_drive()
 st.success(f"Loaded dataset with {len(df)} rows and {len(df.columns)} columns.")
-
-
 # ---------------------------
 # Sidebar filters
 # ---------------------------
@@ -479,6 +458,7 @@ if "living_space" in filtered.columns:
 # ---------------------------
 st.markdown("---")
 st.markdown("Dashboard built with Streamlit, Plotly and Geo data. Use the sidebar to filter state, listing age and price range.")
+
 
 
 
