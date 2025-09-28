@@ -55,7 +55,7 @@ a { color: #66BB6A !important; }
 </style>
 """, unsafe_allow_html=True)
 
-# human-readable number format
+
 def human_format(num):
     for unit in ["", "K", "M", "B", "T"]:
         if abs(num) < 1000.0:
@@ -63,7 +63,7 @@ def human_format(num):
         num /= 1000.0
     return f"{num:.1f}P"
 
-# sampling helper to avoid plotting too many points
+
 def sample_df_for_map(df, max_points=5000, random_state=42):
     if len(df) > max_points:
         return df.sample(max_points, random_state=random_state)
@@ -75,7 +75,7 @@ def sample_df_for_map(df, max_points=5000, random_state=42):
 
 @st.cache_data(show_spinner=False)
 def load_data(folder="data"):
-    # اجمع كل الأجزاء
+
     files = sorted(glob.glob(f"{folder}/cleaned_part_*.csv"))
     if not files:
         st.error("No data files found in 'data' folder.")
@@ -86,7 +86,6 @@ def load_data(folder="data"):
         df_list.append(pd.read_csv(f))
     df = pd.concat(df_list, ignore_index=True)
 
-    # تنظيف سريع
     if "RunDate" in df.columns:
         df["RunDate"] = pd.to_datetime(df["RunDate"], errors="coerce")
 
@@ -100,7 +99,6 @@ def load_data(folder="data"):
 
     return df
 
-# استدعاء البيانات
 df = load_data()
 st.success(f"Loaded {len(df)} rows and {len(df.columns)} columns.")
 
@@ -451,6 +449,7 @@ if "living_space" in filtered.columns:
 # ---------------------------
 st.markdown("---")
 st.markdown("Dashboard built with Streamlit, Plotly and Geo data. Use the sidebar to filter state, listing age and price range.")
+
 
 
 
