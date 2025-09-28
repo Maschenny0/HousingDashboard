@@ -13,7 +13,7 @@ The main objectives:
 
 - ## Important links
 - [Presentation](https://www.canva.com/design/DAG0KuxVZCM/C2CX0wW0IxTrJ8LVhpXXjg/edit?utm_content=DAG0KuxVZCM&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton )
-- [Dashboard](https://apographical-kera-silken.ngrok-free.dev/)
+- [Dashboard](https://apographical-kera-silken.ngrok-free.dev)
 
 
 ## Data Files
